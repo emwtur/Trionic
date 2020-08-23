@@ -33,7 +33,6 @@
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.btnRestoreT8 = new System.Windows.Forms.Button();
             this.btnFlashECU = new System.Windows.Forms.Button();
-            this.listBoxLog = new System.Windows.Forms.ListBox();
             this.btnGetECUInfo = new System.Windows.Forms.Button();
             this.btnReadSRAM = new System.Windows.Forms.Button();
             this.btnRecoverECU = new System.Windows.Forms.Button();
@@ -50,6 +49,7 @@
             this.btnExpand = new System.Windows.Forms.Button();
             this.Minilog = new System.Windows.Forms.Label();
             this.btnWriteDID = new System.Windows.Forms.Button();
+            this.richTextBoxlog = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
             // 
             // btnReadECU
@@ -94,19 +94,6 @@
             this.btnFlashECU.Text = "Flash ECU";
             this.btnFlashECU.UseVisualStyleBackColor = true;
             this.btnFlashECU.Click += new System.EventHandler(this.btnFlashEcu_Click);
-            // 
-            // listBoxLog
-            // 
-            this.listBoxLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.listBoxLog.Font = new System.Drawing.Font("Courier New", 8.25F);
-            this.listBoxLog.FormattingEnabled = true;
-            this.listBoxLog.ItemHeight = 14;
-            this.listBoxLog.Location = new System.Drawing.Point(12, 6);
-            this.listBoxLog.Name = "listBoxLog";
-            this.listBoxLog.Size = new System.Drawing.Size(657, 368);
-            this.listBoxLog.TabIndex = 20;
             // 
             // btnGetECUInfo
             // 
@@ -292,11 +279,25 @@
             this.btnWriteDID.UseVisualStyleBackColor = true;
             this.btnWriteDID.Click += new System.EventHandler(this.btnWriteDID_Click);
             // 
+            // richTextBoxlog
+            // 
+            this.richTextBoxlog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.richTextBoxlog.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.richTextBoxlog.Location = new System.Drawing.Point(12, 6);
+            this.richTextBoxlog.Name = "richTextBoxlog";
+            this.richTextBoxlog.Size = new System.Drawing.Size(657, 368);
+            this.richTextBoxlog.TabIndex = 78;
+            this.richTextBoxlog.Text = "";
+            this.richTextBoxlog.WordWrap = false;
+            // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1023, 382);
+            this.Controls.Add(this.richTextBoxlog);
             this.Controls.Add(this.btnWriteDID);
             this.Controls.Add(this.Minilog);
             this.Controls.Add(this.btnExpand);
@@ -316,7 +317,6 @@
             this.Controls.Add(this.btnReadECU);
             this.Controls.Add(this.btnRestoreT8);
             this.Controls.Add(this.btnFlashECU);
-            this.Controls.Add(this.listBoxLog);
             this.Controls.Add(this.progressBar1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(600, 360);
@@ -324,7 +324,7 @@
             this.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Trionic CAN flasher";
+            this.Text = " ";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMain_FormClosing);
             this.Load += new System.EventHandler(this.frmMain_Load);
             this.Shown += new System.EventHandler(this.frmMain_Shown);
@@ -340,7 +340,6 @@
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Button btnRestoreT8;
         private System.Windows.Forms.Button btnFlashECU;
-        private System.Windows.Forms.ListBox listBoxLog;
         private System.Windows.Forms.Button btnGetECUInfo;
         private System.Windows.Forms.Button btnReadSRAM;
         private System.Windows.Forms.Button btnRecoverECU;
@@ -357,6 +356,7 @@
         private System.Windows.Forms.Button btnExpand;
         private System.Windows.Forms.Label Minilog;
         private System.Windows.Forms.Button btnWriteDID;
+        private System.Windows.Forms.RichTextBox richTextBoxlog;
     }
 }
 

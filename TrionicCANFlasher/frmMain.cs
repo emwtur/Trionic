@@ -36,6 +36,7 @@ namespace TrionicCANFlasher
         BackgroundWorker bgworkerLogCanData;
         private bool m_bypassCANfilters = false; // Christian: Stop-gap solution for now.
         private FormWindowState LastWindowState = FormWindowState.Normal;
+        private string lastlogmessage;
 
         public frmMain()
         {
@@ -118,22 +119,22 @@ namespace TrionicCANFlasher
 
         private void SetupListboxWrapping()
         {
-            listBoxLog.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
-            listBoxLog.MeasureItem += lst_MeasureItem;
-            listBoxLog.DrawItem += lst_DrawItem;
+            //listBoxLog.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawVariable;
+            //listBoxLog.MeasureItem += lst_MeasureItem;
+            //listBoxLog.DrawItem += lst_DrawItem;
         }
 
         private void lst_MeasureItem(object sender, MeasureItemEventArgs e)
         {
-            e.ItemHeight = (int)e.Graphics.MeasureString(listBoxLog.Items[e.Index].ToString(), listBoxLog.Font, listBoxLog.Width).Height;
+            //e.ItemHeight = (int)e.Graphics.MeasureString(listBoxLog.Items[e.Index].ToString(), listBoxLog.Font, listBoxLog.Width).Height;
         }
 
         private void lst_DrawItem(object sender, DrawItemEventArgs e)
         {
-            e.DrawBackground();
-            e.DrawFocusRectangle();
-            if (e.Index >= 0)
-                e.Graphics.DrawString(listBoxLog.Items[e.Index].ToString(), e.Font, new SolidBrush(e.ForeColor), e.Bounds);
+            //e.DrawBackground();
+            //e.DrawFocusRectangle();
+            //if (e.Index >= 0)
+            //    e.Graphics.DrawString(listBoxLog.Items[e.Index].ToString(), e.Font, new SolidBrush(e.ForeColor), e.Bounds);
         }
 
         void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs u)
@@ -235,16 +236,37 @@ namespace TrionicCANFlasher
             }
         }
 
+        private void log (string toLog)
+        {
+            if (!string.IsNullOrEmpty(toLog))
+            {
+                lastlogmessage = toLog;
+                richTextBoxlog.AppendText(toLog);
+                if (!toLog.EndsWith(Environment.NewLine))
+                {
+                    richTextBoxlog.AppendText(Environment.NewLine);
+                }
+                if (richTextBoxlog.Lines.Length > 20)
+                {
+                    if (string.IsNullOrEmpty(richTextBoxlog.SelectedText))
+                    {
+                        richTextBoxlog.SelectionStart = richTextBoxlog.Text.Length;
+                        richTextBoxlog.ScrollToCaret();
+                    }
+                }
+            }
+        }
+
         public void AddLogItem(string item)
         {
             if (AppSettings.MainWidth > 740)
             {
                 var uiItem = DateTime.Now.ToString("HH:mm:ss.fff") + " - " + item;
-                listBoxLog.Items.Add(uiItem);
+                log(uiItem);
             }
             else
             {
-                listBoxLog.Items.Add(item);
+                log(item);
             }
 
             if (AppSettings.Collapsed)
@@ -260,8 +282,8 @@ namespace TrionicCANFlasher
                 Minilog.Visible = true;
             }
 
-            while (listBoxLog.Items.Count > 100) listBoxLog.Items.RemoveAt(0);
-            listBoxLog.SelectedIndex = listBoxLog.Items.Count - 1;
+            //while (listBoxLog.Items.Count > 100) listBoxLog.Items.RemoveAt(0);
+            //listBoxLog.SelectedIndex = listBoxLog.Items.Count - 1;
             logger.Trace(item);
             Application.DoEvents();
         }
@@ -437,7 +459,7 @@ namespace TrionicCANFlasher
                     IsT8Class = false;
                     break;
             }
- 
+
             switch (AppSettings.AdapterType.Index)
             {
                 case (int)CANBusAdapter.JUST4TRIONIC:
@@ -551,7 +573,7 @@ namespace TrionicCANFlasher
             {
                 PreCheck = false;
             }
-            else if ((AppSettings.AdapterType.Index == (int)CANBusAdapter.J2534  ||
+            else if ((AppSettings.AdapterType.Index == (int)CANBusAdapter.J2534 ||
                       AppSettings.AdapterType.Index == (int)CANBusAdapter.KVASER ||
                       AppSettings.AdapterType.Index == (int)CANBusAdapter.LAWICEL) &&
                       AppSettings.Adapter.Index < 0)
@@ -590,7 +612,7 @@ namespace TrionicCANFlasher
                     btnReadSRAM.Enabled = false;
                     btnRestoreT8.Enabled = false;
                     btnRecoverECU.Enabled = false;
-                    
+
                     // OBDLink cannot handle write on me9.6, and truncate some fields in getecuinfo
                     if (AppSettings.AdapterType.Index == (int)CANBusAdapter.ELM327)
                     {
@@ -801,7 +823,7 @@ namespace TrionicCANFlasher
                             EnableUserInput(false);
                             AddLogItem("Opening connection");
                             trionic8.SecurityLevel = AccessLevel.AccessLevel01;
-                            
+
                             trionic8.FormatSystemPartitions = true; // This is undefined in mcp.
 
                             if (trionic8.openDevice(false))
@@ -833,7 +855,7 @@ namespace TrionicCANFlasher
                             trionic8.SecurityLevel = AccessLevel.AccessLevel01;
 
                             trionic8.FormatSystemPartitions = true;
-                            trionic8.FormatBootPartition    = true;
+                            trionic8.FormatBootPartition = true;
 
                             if (trionic8.openDevice(false))
                             {
@@ -862,9 +884,9 @@ namespace TrionicCANFlasher
                             EnableUserInput(false);
                             AddLogItem("Opening connection");
                             trionic8.SecurityLevel = AccessLevel.AccessLevel01;
-                            
+
                             trionic8.FormatSystemPartitions = true; // This is undefined in mcp.
-                            trionic8.FormatBootPartition    = true;
+                            trionic8.FormatBootPartition = true;
 
                             if (trionic8.openDevice(false))
                             {
@@ -1129,7 +1151,7 @@ namespace TrionicCANFlasher
                                     AddLogItem("Acquiring FLASH content");
                                     Application.DoEvents();
                                     BackgroundWorker bgWorker;
-                                    bgWorker = new BackgroundWorker();                                   
+                                    bgWorker = new BackgroundWorker();
                                     if (AppSettings.UseLegion)
                                     {
                                         bgWorker.DoWork += new DoWorkEventHandler(trionic8.ReadFlashLegT8);
@@ -1378,7 +1400,7 @@ namespace TrionicCANFlasher
                         logger.Debug("PI 0x24         : " + trionic8.GetPI24());
                         logger.Debug("PI 0xA0         : " + trionic8.GetPIA0());
                         logger.Debug("PI 0x96         : " + trionic8.GetPI96());
-                        
+
                         // On a non biopower bin this request seem to poison the session, do it last always!
                         AddLogItem("E85                       : " + trionic8.GetE85Percentage().ToString("F2") + " %");
                     }
@@ -1481,7 +1503,7 @@ namespace TrionicCANFlasher
                         AddLogItem("Connection terminated");
                     }
                     else if (cbxEcuType.SelectedIndex == (int)ECU.TRIONIC7)
-                    {    
+                    {
                         SetGenericOptions(trionic7);
                         trionic7.UseFlasherOnDevice = false;
 
@@ -1675,7 +1697,7 @@ namespace TrionicCANFlasher
                     {
                         if (!pi.E85.Equals(e85))
                         {
-                            if(trionic7.SetE85Percentage((int)pi.E85))
+                            if (trionic7.SetE85Percentage((int)pi.E85))
                             {
                                 AddLogItem("Set fields successful, E85Percentage:" + pi.E85);
                             }
@@ -1736,7 +1758,7 @@ namespace TrionicCANFlasher
                         if (!pi.Convertible.Equals(convertible) || !pi.SAI.Equals(sai) || !pi.Highoutput.Equals(highoutput) || !pi.Biopower.Equals(biopower) || !pi.ClutchStart.Equals(clutchStart) || !pi.DiagnosticType.Equals(diagnosticType) || !pi.TankType.Equals(tankType))
                         {
                             AddLogItem("Detected changed values from user:" + pi.Convertible + " SAI:" + pi.SAI + " HighOutput:" + pi.Highoutput + " Biopower:" + pi.Biopower + " DiagnosticType:" + pi.DiagnosticType + " ClutchStart:" + pi.ClutchStart + " TankType:" + pi.TankType);
-                            
+
                             // Do a second read to make sure the first one was ok
                             bool convertible2, sai2, highoutput2, biopower2, clutchStart2;
                             TankType tankType2;
@@ -1761,7 +1783,7 @@ namespace TrionicCANFlasher
 
                         if (!pi.VIN.Equals(vin))
                         {
-                            if(trionic8.SetVIN(pi.VIN))
+                            if (trionic8.SetVIN(pi.VIN))
                             {
                                 AddLogItem("Set fields successful, VIN:" + pi.VIN);
                             }
@@ -1773,7 +1795,7 @@ namespace TrionicCANFlasher
 
                         if (!pi.TopSpeed.Equals(topspeed))
                         {
-                            if(trionic8.SetTopSpeed(pi.TopSpeed))
+                            if (trionic8.SetTopSpeed(pi.TopSpeed))
                             {
                                 AddLogItem("Set fields successful, TopSpeed:" + pi.TopSpeed);
                             }
@@ -1785,7 +1807,7 @@ namespace TrionicCANFlasher
 
                         if (!pi.E85.ToString("F2").Equals(e85.ToString("F2")))
                         {
-                            if(trionic8.SetE85Percentage(pi.E85))
+                            if (trionic8.SetE85Percentage(pi.E85))
                             {
                                 AddLogItem("Set fields successful, E85Percentage:" + pi.E85);
                             }
@@ -1797,7 +1819,7 @@ namespace TrionicCANFlasher
 
                         if (!pi.Oil.ToString("F2").Equals(oil.ToString("F2")))
                         {
-                            if(trionic8.SetOilQuality(pi.Oil))
+                            if (trionic8.SetOilQuality(pi.Oil))
                             {
                                 AddLogItem("Set fields successful, OilQuality:" + pi.Oil);
                             }
@@ -1834,7 +1856,7 @@ namespace TrionicCANFlasher
                     {
                         if (!pi.TopSpeed.Equals(topspeed))
                         {
-                            if(trionic8.SetTopSpeed(pi.TopSpeed))
+                            if (trionic8.SetTopSpeed(pi.TopSpeed))
                             {
                                 AddLogItem("Set fields successful, TopSpeed:" + pi.TopSpeed);
                             }
@@ -2019,8 +2041,8 @@ namespace TrionicCANFlasher
                     }
                 }
                 else if (cbxEcuType.SelectedIndex == (int)ECU.TRIONIC8 ||
-                    cbxEcuType.SelectedIndex == (int)ECU.MOTRONIC96    ||
-                    cbxEcuType.SelectedIndex == (int)ECU.TRIONIC8_MCP  ||
+                    cbxEcuType.SelectedIndex == (int)ECU.MOTRONIC96 ||
+                    cbxEcuType.SelectedIndex == (int)ECU.TRIONIC8_MCP ||
                     cbxEcuType.SelectedIndex == (int)ECU.Z22SEMain_LEG ||
                     cbxEcuType.SelectedIndex == (int)ECU.Z22SEMCP_LEG)
                 {
@@ -2147,7 +2169,7 @@ namespace TrionicCANFlasher
             }
             else
             {
-                AppSettings.MainWidth  = this.Width;
+                AppSettings.MainWidth = this.Width;
                 AppSettings.MainHeight = this.Height;
             }
         }
@@ -2201,7 +2223,7 @@ namespace TrionicCANFlasher
                 HandleDynItems(true);
                 AppSettings.Collapsed = true;
 
-                AppSettings.MainWidth  = this.Width;
+                AppSettings.MainWidth = this.Width;
                 AppSettings.MainHeight = this.Height;
 
                 int Xloc = this.Location.X + AppSettings.MainWidth;
@@ -2212,7 +2234,7 @@ namespace TrionicCANFlasher
                 this.Location = new Point(Xloc - 374, Yloc);
             }
 
-            else if(AppSettings.Collapsed)
+            else if (AppSettings.Collapsed)
             {
                 HandleDynItems(false);
 
@@ -2220,7 +2242,7 @@ namespace TrionicCANFlasher
                 int Yloc = this.Location.Y;
 
                 this.MaximumSize = new Size(0, 0);
-                this.Width  = AppSettings.MainWidth;
+                this.Width = AppSettings.MainWidth;
                 this.Height = AppSettings.MainHeight;
 
                 this.Location = new Point(Xloc - AppSettings.MainWidth, Yloc);
@@ -2240,33 +2262,11 @@ namespace TrionicCANFlasher
             SetViewMode(true);
 
             // Show last logged item in minilog. If available
-            if (listBoxLog.Items.Count > 0)
+
+            if (!string.IsNullOrEmpty(lastlogmessage))
             {
-
-                if (listBoxLog.Text.Length > 0)
-                {
-                    string Lastmsg = listBoxLog.Text;
-
-                    // Strip time stamp from item
-                    if (listBoxLog.Text.Length > 15)
-                    {
-                        if (listBoxLog.Text[2] == 0x3A &&
-                            listBoxLog.Text[5] == 0x3A &&
-                            listBoxLog.Text[8] == 0x2E)
-                        {
-                            Lastmsg = Lastmsg.Remove(0, 15);
-                        }
-                    }
-
-                    // Truncate text that is longer than the progress bar
-                    if (Lastmsg.Length > 57)
-                    {
-                        Lastmsg = Lastmsg.Remove(57, Lastmsg.Length - 57);
-                    }
-
-                    Minilog.Text = Lastmsg;
-                    Minilog.Visible = true;
-                }
+                Minilog.Text = lastlogmessage;
+                Minilog.Visible = true;
             }
         }
 
@@ -2331,5 +2331,7 @@ namespace TrionicCANFlasher
             }
             LogManager.Flush();
         }
+
+  
     }
 }
